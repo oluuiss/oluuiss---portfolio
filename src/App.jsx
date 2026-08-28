@@ -199,6 +199,12 @@ const DocIcon = (p) => (
   </svg>
 );
 
+const CloseIcon = (p) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" width="26" height="26" {...p}>
+    <path d="M6 6 18 18M18 6 6 18" />
+  </svg>
+);
+
 const ThemeIcon = () => (
   <svg className="theme-icon" viewBox="0 0 24 24" width="20" height="20">
     <mask id="moon-cut">
@@ -452,8 +458,8 @@ function Home() {
   );
 }
 
-const SHOW_PHOTO = false;
-const PHOTO = '/assets/fotos/foto.jpg';
+const SHOW_PHOTO = true;
+const PHOTO = '/assets/fotos/me.jpg';
 
 const ABOUT_PARAGRAPHS = [
   'Me chamo Luis, tenho 20 anos e sou estudante do sexto período de Engenharia da Computação na Faculdade das Américas (FAM). Natural de Fernandópolis, no interior de São Paulo, mudei-me para a capital em busca de novas oportunidades, crescimento profissional e desafios que contribuíssem para minha formação.',
@@ -503,6 +509,7 @@ const CERTIFICATES = [
 
 function Sobre() {
   const [photoOk, setPhotoOk] = useState(true);
+
 
   return (
     <section className="page about">
@@ -563,34 +570,38 @@ function Sobre() {
         ))}
       </div>
 
-      <Reveal tag="aside" className="about-side">
-        {SHOW_PHOTO && photoOk && (
-          <img
-            className="about-photo"
-            src={PHOTO}
-            alt="Luis Gustavo da Silva Porto"
-            onError={() => setPhotoOk(false)}
-          />
-        )}
+      <aside className="about-side">
+        <div className="about-side-inner">
+          {SHOW_PHOTO && photoOk && (
+            <img
+              className="about-photo"
+              src={PHOTO}
+              alt="Luis Gustavo da Silva Porto"
+              onError={() => setPhotoOk(false)}
+            />
+          )}
 
-        <ul className="side-links">
-          {SOCIALS.map(({ href, label, sideLabel, Icon }) => (
-            <li key={label}>
-              <a href={href} target="_blank" rel="noreferrer">
-                <Icon width="20" height="20" />
-                <span>{sideLabel || label}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
+          <div className="about-contact">
+            <ul className="side-links">
+              {SOCIALS.map(({ href, label, sideLabel, Icon }) => (
+                <li key={label}>
+                  <a href={href} target="_blank" rel="noreferrer">
+                    <Icon width="20" height="20" />
+                    <span>{sideLabel || label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
 
-        <div className="side-divider" />
+            <div className="side-divider" />
 
-        <a className="side-email" href={`mailto:${EMAIL}`}>
-          <MailIcon width="20" height="20" />
-          <span>{EMAIL}</span>
-        </a>
-      </Reveal>
+            <a className="side-email" href={`mailto:${EMAIL}`}>
+              <MailIcon width="20" height="20" />
+              <span>{EMAIL}</span>
+            </a>
+          </div>
+        </div>
+      </aside>
     </section>
   );
 }
@@ -732,8 +743,8 @@ function Links() {
       </Reveal>
 
       <Reveal tag="p" className="links-intro">
-        Minha curiosidade sempre me levou longe: entre código, estudo e conversa, é por aqui que
-        você me encontra.
+        Minha curiosidade sempre me levou longe: entre código, jogos, estudo e conversa, é por
+        aqui que você me encontra.
       </Reveal>
 
       <div className="links-grid">
@@ -926,6 +937,29 @@ export default function App() {
     resetTyped();
   }, [page]);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+
+    const onResize = () => {
+      if (window.innerWidth > 860) setMenuOpen(false);
+    };
+
+    const anterior = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    addEventListener('keydown', onKey);
+    addEventListener('resize', onResize);
+
+    return () => {
+      document.body.style.overflow = anterior;
+      removeEventListener('keydown', onKey);
+      removeEventListener('resize', onResize);
+    };
+  }, [menuOpen]);
+
   const View = VIEWS[page];
 
   return (
@@ -988,15 +1022,40 @@ export default function App() {
           </button>
         </nav>
 
-        {menuOpen && (
-          <div className="mobile-menu">
+        <div
+          className={`mobile-backdrop${menuOpen ? ' is-open' : ''}`}
+          aria-hidden="true"
+          onClick={() => setMenuOpen(false)}
+        />
+
+        <aside className={`mobile-menu${menuOpen ? ' is-open' : ''}`} aria-hidden={!menuOpen}>
+          <button
+            type="button"
+            className="mobile-menu-close"
+            aria-label="Fechar menu"
+            tabIndex={menuOpen ? 0 : -1}
+            onClick={() => setMenuOpen(false)}
+          >
+            <CloseIcon />
+          </button>
+
+          <nav className="mobile-menu-links">
             {PAGES.map((id) => (
-              <button key={id} type="button" onClick={() => setPage(id)}>
+              <button
+                key={id}
+                type="button"
+                className={page === id ? 'active' : undefined}
+                tabIndex={menuOpen ? 0 : -1}
+                onClick={() => {
+                  setPage(id);
+                  setMenuOpen(false);
+                }}
+              >
                 {id}
               </button>
             ))}
-          </div>
-        )}
+          </nav>
+        </aside>
 
       </header>
 
