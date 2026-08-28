@@ -3,7 +3,7 @@ import './styles/global.css';
 
 function useReveal() {
   const ref = useRef(null);
-  
+
   const [shown, setShown] = useState(() => typeof IntersectionObserver === 'undefined');
 
   useEffect(() => {
@@ -47,73 +47,38 @@ function Reveal({ children, tag: Tag = 'div', className = '', delay = 0, title }
 }
 
 const typedNodes = new Set();
+const lastTyped = new WeakMap();
+const typedProgress = new WeakMap();
 let rafPending = false;
 
-let ordered = [];
-let offsets = [];
-let totalChars = 0;
-let orderDirty = true;
-
-let maxProgress = 0;
-
-let baselineDirty = true;
-
 function resetTyped() {
-  maxProgress = 0;
-  baselineDirty = true;
+  for (const el of typedNodes) {
+    typedProgress.delete(el);
+    lastTyped.delete(el);
+  }
   scheduleTyped();
 }
 
-function computeBaseline() {
-  const limite = window.innerHeight * 0.92;
-  let escrito = 0;
-  for (let i = 0; i < ordered.length; i++) {
-    const el = ordered[i];
-    if (el.getBoundingClientRect().top >= limite) break;
-    escrito = offsets[i] + (Number(el.dataset.n) || 0);
-  }
-  return totalChars ? escrito / totalChars : 1;
-}
-
-function rebuildOrder() {
-  ordered = [...typedNodes].sort((a, b) =>
-    a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
-  );
-  offsets = [];
-  totalChars = 0;
-  for (const el of ordered) {
-    offsets.push(totalChars);
-    totalChars += Number(el.dataset.n) || 0;
-  }
-  orderDirty = false;
-}
-
-const lastTyped = new WeakMap();
-
 function paintTyped() {
   rafPending = false;
-  if (orderDirty) rebuildOrder();
-  if (!totalChars) return;
+  const alturaTela = window.innerHeight;
+  const linhaInicial = alturaTela * 0.92;
+  const restante = Math.max(
+    0,
+    document.documentElement.scrollHeight - window.scrollY - alturaTela
+  );
 
-  if (baselineDirty) {
-    maxProgress = Math.max(maxProgress, computeBaseline());
-    baselineDirty = false;
-  }
+  for (const el of typedNodes) {
+    const rect = el.getBoundingClientRect();
+    const percurso = Math.max(alturaTela * 0.45, rect.height * 0.85);
+    const folga = Math.max(0, percurso - restante);
+    const bruto = (linhaInicial - rect.top + folga) / percurso;
 
-  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  
-  const span = maxScroll * 0.88;
-  const raw = span <= 0 ? 1 : Math.min(1, Math.max(0, window.scrollY / span));
+    const anterior = typedProgress.get(el) || 0;
+    const atual = Math.max(anterior, Math.min(1, Math.max(0, bruto)));
+    if (atual !== anterior) typedProgress.set(el, atual);
 
-  if (raw > maxProgress) maxProgress = raw;
-
-  const written = maxProgress * totalChars;
-
-  for (let i = 0; i < ordered.length; i++) {
-    const el = ordered[i];
-    const n = Number(el.dataset.n) || 1;
-    const local = (written - offsets[i]) / n;
-    const v = local < 0 ? '0' : local > 1 ? '1' : local.toFixed(3);
+    const v = atual >= 1 ? '1' : atual.toFixed(3);
     if (lastTyped.get(el) === v) continue;
     lastTyped.set(el, v);
     el.style.setProperty('--typed', v);
@@ -133,13 +98,13 @@ function registerTyped(el) {
     addEventListener('resize', scheduleTyped);
   }
   typedNodes.add(el);
-  orderDirty = true;
   scheduleTyped();
 }
 
 function unregisterTyped(el) {
   typedNodes.delete(el);
-  orderDirty = true;
+  typedProgress.delete(el);
+  lastTyped.delete(el);
   if (typedNodes.size === 0) {
     removeEventListener('scroll', scheduleTyped);
     removeEventListener('resize', scheduleTyped);
@@ -259,32 +224,32 @@ const PHONE_LINK =
 const SOCIALS = [
   { href: 'https://github.com/oluuiss', label: 'GitHub', Icon: GitHubIcon },
   { href: 'https://www.linkedin.com/in/oluuiss/', label: 'LinkedIn', Icon: LinkedInIcon },
-  
+
   { href: PHONE_LINK, label: 'WhatsApp', sideLabel: PHONE_DISPLAY, Icon: WhatsAppIcon },
 ];
 
-const PAGES = ['sobre', 'projetos', 'experiencia', 'links', 'contato'];
+const PAGES = ['about', 'projects', 'experience', 'links', 'contact'];
 
 const PROJECTS = [
   {
     name: 'CRUD (Create, Read, Update, Delete)',
     image: '/assets/projetos/project1.svg',
     description:
-      'Cadastro, busca, edição e remoção de usuários em Java usando banco de dados via JDBC.',
+      'Create, search, edit and delete users in Java using a database through JDBC.',
     href: 'https://github.com/oluuiss/crud',
   },
   {
     name: 'Spring CRUD',
     image: '/assets/projetos/springcrud.png',
     description:
-      'Spring com Lombok, DevTools, PostgreSQL Driver, Spring Web, JPA, Validation e FlyWay Migration.',
+      'Spring with Lombok, DevTools, PostgreSQL Driver, Spring Web, JPA, Validation and FlyWay Migration.',
     href: 'https://github.com/oluuiss/demo-outback',
   },
   {
-    name: 'Website para empresa local',
+    name: 'Website for a local business',
     image: '/assets/projetos/project3.svg',
     description:
-      'Projeto em grupo desenvolvido para uma empresa local com o objetivo de aumentar a confiabilidade dos clientes. HTML, CSS e JavaScript.',
+      'Group project built for a local business to strengthen customer trust. HTML, CSS and JavaScript.',
     href: 'https://github.com/oluuiss/web-site-for-enterprise',
   },
 ];
@@ -298,7 +263,7 @@ const TECH_ICONS = {
       <path d="M5 21.2h12" />
     </svg>
   ),
-  
+
   macOS: () => (
     <svg viewBox="0 0 24 24" fill="currentColor">
       <path d="M17.05 12.53c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.1-2.01-3.77-2.04-1.6-.16-3.13.94-3.94.94-.82 0-2.07-.92-3.4-.9-1.75.03-3.36 1.02-4.26 2.58-1.82 3.15-.46 7.81 1.3 10.36.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.38.81 1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.39-2.85 1.42-2.92-.03-.01-2.72-1.04-2.75-4.13M14.6 4.6c.71-.86 1.19-2.06 1.06-3.25-1.02.04-2.26.68-3 1.54-.66.76-1.24 1.98-1.08 3.14 1.14.09 2.3-.58 3.02-1.43" />
@@ -309,7 +274,7 @@ const TECH_ICONS = {
       <path d="M3 5.6 10.4 4.6v7.05H3V5.6Zm8.6-1.15L21 3.1v8.55h-9.4V4.45ZM3 12.9h7.4v7.05L3 18.95V12.9Zm8.6 0H21v8.55l-9.4-1.3V12.9Z" />
     </svg>
   ),
-  
+
   Ubuntu: () => (
     <svg viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -356,7 +321,7 @@ const TECH_ICONS = {
       <path d="M4.6 12c0 1.7 3.3 3.1 7.4 3.1s7.4-1.4 7.4-3.1" />
     </svg>
   ),
-  
+
   HTML: () => (
     <svg viewBox="0 0 24 24">
       <path d="M3.6 2.5h16.8l-1.5 16.6L12 21.5l-6.9-2.4L3.6 2.5Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
@@ -437,7 +402,7 @@ function LogoMarquee() {
 function Home() {
   return (
     <section className="hero">
-      
+
       <div className="hero-content">
         <h1 className="hero-title">
           <span>Backend Developer</span>
@@ -462,10 +427,10 @@ const SHOW_PHOTO = true;
 const PHOTO = '/assets/fotos/me.jpg';
 
 const ABOUT_PARAGRAPHS = [
-  'Me chamo Luis, tenho 20 anos e sou estudante do sexto período de Engenharia da Computação na Faculdade das Américas (FAM). Natural de Fernandópolis, no interior de São Paulo, mudei-me para a capital em busca de novas oportunidades, crescimento profissional e desafios que contribuíssem para minha formação.',
-  'Minha trajetória com a tecnologia começou cedo. Aos 13 anos, já desenvolvia pequenos projetos utilizando JavaScript, Node.js e Replit, principalmente na criação de bots para Discord. Essa experiência despertou meu interesse pela programação e, ao longo dos anos, transformou-se em uma verdadeira paixão por tecnologia e desenvolvimento de software. Aos 18 anos, iniciei minha graduação em Engenharia da Computação na UNIFEV, onde permaneci até o quarto período, quando me mudei para São Paulo e dei continuidade à minha formação na FAM. Desde então, venho desenvolvendo projetos acadêmicos e pessoais que me permitem aplicar, na prática, os conhecimentos adquiridos ao longo da graduação.',
-  'Tenho como principal foco o desenvolvimento Back-end, com especial interesse pelo ecossistema Java e Spring Boot, área na qual venho concentrando meus estudos e projetos. Busco desenvolver aplicações robustas, escaláveis e bem estruturadas, aplicando princípios de código limpo, boas práticas de desenvolvimento e organização de software. Além do desenvolvimento com Java e Spring Boot, possuo experiência com Swift para desenvolvimento no ecossistema Apple, MySQL e PostgreSQL para modelagem e gerenciamento de bancos de dados relacionais, Node.js para desenvolvimento de soluções back-end e C para fundamentos de programação e sistemas de baixo nível. Também utilizo Git e GitHub para controle de versão e colaboração em projetos.',
-  'Minha formação é pautada pela busca constante por evolução técnica e profissional. Procuro transformar cada projeto e desafio em uma oportunidade de aprendizado, aprofundando tanto meus conhecimentos práticos quanto minha base teórica. Meu objetivo é continuar evoluindo como desenvolvedor, contribuindo para a construção de soluções eficientes, escaláveis e de impacto real.',
+  'My name is Luis, I am 20 years old and a sixth-semester Computer Engineering student at Faculdade das Américas (FAM). Born in Fernandópolis, in the countryside of São Paulo, I moved to the capital looking for new opportunities, professional growth and challenges that would add to my education.',
+  'My path with technology started early. At 13 I was already building small projects with JavaScript, Node.js and Replit, mostly Discord bots. That experience sparked my interest in programming and, over the years, grew into a real passion for technology and software development. At 18 I began my Computer Engineering degree at UNIFEV, where I stayed until the fourth semester, when I moved to São Paulo and carried my studies on at FAM. Since then I have been building academic and personal projects that let me put into practice what I learn throughout the degree.',
+  'My main focus is Back-end development, with a particular interest in the Java and Spring Boot ecosystem, where I have been concentrating my studies and projects. I aim to build robust, scalable and well-structured applications, applying clean code principles, good development practices and solid software organisation. Beyond Java and Spring Boot, I have experience with Swift for development in the Apple ecosystem, MySQL and PostgreSQL for modelling and managing relational databases, Node.js for back-end solutions and C for programming fundamentals and low-level systems. I also use Git and GitHub for version control and collaboration on projects.',
+  'My education is driven by a constant pursuit of technical and professional growth. I try to turn every project and every challenge into a learning opportunity, deepening both my hands-on knowledge and my theoretical foundation. My goal is to keep growing as a developer, contributing to efficient, scalable solutions with real impact.',
 ];
 
 const EXPERIENCE = [
@@ -477,13 +442,13 @@ const EXPERIENCE = [
     company: 'LWN Team Análise',
     companyHref: 'https://lwnengenharia.com.br/',
     summary:
-      'Atuação no desenvolvimento e manutenção de soluções tecnológicas para otimização de processos internos, com foco em automação, controle de dados e melhoria operacional.',
+      'Development and maintenance of technology solutions that optimise internal processes, focused on automation, data control and operational improvement.',
     bullets: [
-      'Desenvolvimento e manutenção de aplicações web & mobile.',
-      'Criação e integração de bancos de dados PostgreSQL.',
-      'Análise e correção de problemas em sistemas existentes.',
-      'Desenvolvimento de dashboards e soluções para análise de dados.',
-      'Participação na identificação de necessidades e transformação de demandas operacionais em soluções tecnológicas.',
+      'Development and maintenance of web & mobile applications.',
+      'Design and integration of PostgreSQL databases.',
+      'Analysis and troubleshooting of issues in existing systems.',
+      'Development of dashboards and data analysis solutions.',
+      'Involvement in identifying needs and turning operational demands into technology solutions.',
     ],
     skills: ['HTML', 'CSS', 'JavaScript', 'React', 'VS Code', 'Git', 'PostgreSQL', 'Vercel'],
   },
@@ -491,31 +456,30 @@ const EXPERIENCE = [
 
 const EDUCATION = [
   {
-    course: 'Engenharia da Computação',
-    school: 'Faculdade das Americas (FAM) - São Paulo - SP, Brasil.',
+    course: 'Computer Engineering',
+    school: 'Faculdade das Americas (FAM) - São Paulo - SP, Brazil.',
     period: '2024 — 2028',
-    kind: 'Bacharelado',
+    kind: "Bachelor's Degree",
   },
 ];
 
 const CERTIFICATES = [
   {
-    course: 'Programador Web com ênfase em PHP e Java',
+    course: 'Web Programming with emphasis on PHP and Java',
     school: 'Via Certa Cursos — Fernandópolis',
-    period: '2021 — 2022 · 121 horas',
+    period: '2021 — 2022 · 121 hours',
     href: 'https://drive.google.com/file/d/1h3GONblORzY8WXS76wM0N02nvdhYxcij/view?usp=sharing',
   },
 ];
 
-function Sobre() {
+function About() {
   const [photoOk, setPhotoOk] = useState(true);
-
 
   return (
     <section className="page about">
       <div className="about-main">
         <ScrollTyped tag="h1" className="about-title">
-          Sobre mim
+          About me
         </ScrollTyped>
 
         {ABOUT_PARAGRAPHS.map((text, i) => (
@@ -541,7 +505,7 @@ function Sobre() {
           ))}
         </div>
 
-        <ScrollTyped tag="h2">Formação</ScrollTyped>
+        <ScrollTyped tag="h2">Education</ScrollTyped>
         {EDUCATION.map(({ course, school, period, kind }) => (
           <Reveal className="entry" key={course}>
             <ScrollTyped tag="h3">{course}</ScrollTyped>
@@ -549,7 +513,7 @@ function Sobre() {
           </Reveal>
         ))}
 
-        <ScrollTyped tag="h2">Certificados</ScrollTyped>
+        <ScrollTyped tag="h2">Certificates</ScrollTyped>
         {CERTIFICATES.map(({ course, school, period, href }) => (
           <Reveal className="entry" key={course}>
             <h3>
@@ -559,8 +523,8 @@ function Sobre() {
                 href={href}
                 target="_blank"
                 rel="noreferrer"
-                title="Ver certificado"
-                aria-label={`Ver certificado: ${course}`}
+                title="View certificate"
+                aria-label={`View certificate: ${course}`}
               >
                 <DocIcon />
               </a>
@@ -606,14 +570,14 @@ function Sobre() {
   );
 }
 
-function Projetos() {
-  
+function Projects() {
+
   const [aberto, setAberto] = useState(null);
 
   return (
     <section className="page">
       <ScrollTyped tag="h1" className="page-title">
-        Projetos
+        Projects
       </ScrollTyped>
       <div className="project-grid">
         {PROJECTS.map(({ name, image, description, href }, i) => {
@@ -625,7 +589,7 @@ function Projetos() {
               key={name}
               delay={i * 110}
             >
-              
+
               <div className="project-inner">
                 <button
                   type="button"
@@ -648,11 +612,11 @@ function Projetos() {
                       href={href}
                       target="_blank"
                       rel="noreferrer"
-                      title={`Ver ${name} no GitHub`}
+                      title={`View ${name} on GitHub`}
                     >
                       <img src={image} alt={name} loading="lazy" />
                       <span className="project-shot-label">
-                        Ver no GitHub
+                        View on GitHub
                         <ArrowIcon />
                       </span>
                     </a>
@@ -667,17 +631,17 @@ function Projetos() {
   );
 }
 
-function Experiencia() {
+function Experience() {
   return (
     <section className="page page-narrow">
       <ScrollTyped tag="h1" className="page-title">
-        Experiência
+        Experience
       </ScrollTyped>
       <div className="xp-grid">
         {EXPERIENCE.map(
           ({ logo, period, current, role, company, companyHref, summary, bullets, skills }) => (
             <Reveal tag="article" className="xp-entry" key={role + company}>
-              
+
               <div className="xp-logo">
                 <img src={logo} alt={company} />
               </div>
@@ -692,7 +656,7 @@ function Experiencia() {
                 <p className="xp-period">
                   {period} <span className="xp-dash">-</span>{' '}
                   <span className={current ? 'xp-current' : undefined}>
-                    {current ? 'Atualmente' : ''}
+                    {current ? 'Present' : ''}
                   </span>
                 </p>
 
@@ -728,10 +692,10 @@ const ALL_LINKS = [
   { label: 'GitHub', href: 'https://github.com/oluuiss', Icon: GitHubIcon },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/oluuiss/', Icon: LinkedInIcon },
   { label: 'Instagram', href: 'https://www.instagram.com/oluuiss', Icon: InstagramIcon },
-  
+
   { label: 'Discord', href: 'https://discord.gg/A6QeZc6p', icon: '/assets/logos/discord.png', breakAfter: true },
   { label: 'WhatsApp', href: PHONE_LINK, Icon: WhatsAppIcon },
-  { label: 'E-mail', href: `mailto:${EMAIL}`, Icon: MailIcon },
+  { label: 'Email', href: `mailto:${EMAIL}`, Icon: MailIcon },
   { label: 'PlayStation', href: 'https://profile.playstation.com/yLuisss', icon: '/assets/logos/playstation.png' },
 ];
 
@@ -739,12 +703,12 @@ function Links() {
   return (
     <section className="page links-page">
       <Reveal tag="h1" className="links-title">
-        Estou por toda a internet
+        I am all over the internet
       </Reveal>
 
       <Reveal tag="p" className="links-intro">
-        Minha curiosidade sempre me levou longe: entre código, jogos, estudo e conversa, é por
-        aqui que você me encontra.
+        My curiosity has always taken me far: between code, games, study and conversation, this
+        is where you find me.
       </Reveal>
 
       <div className="links-grid">
@@ -757,12 +721,12 @@ function Links() {
                 target={href.startsWith('mailto:') ? undefined : '_blank'}
                 rel="noreferrer"
               >
-                
+
                 {icon ? <img src={icon} alt="" draggable="false" /> : <Icon width="19" height="19" />}
                 <span>{label}</span>
               </a>
             </Reveal>
-            
+
             {breakAfter && <span className="links-break" aria-hidden="true" />}
           </Fragment>
         ))}
@@ -771,14 +735,14 @@ function Links() {
   );
 }
 
-function Contato() {
+function Contact() {
   const [form, setForm] = useState({ nome: '', email: '', mensagem: '' });
 
   const campo = (chave) => (e) => setForm((f) => ({ ...f, [chave]: e.target.value }));
 
   const enviar = (e) => {
     e.preventDefault();
-    const assunto = `Contato pelo portfólio — ${form.nome}`;
+    const assunto = `Portfolio contact — ${form.nome}`;
     const corpo = `${form.mensagem}\n\n—\n${form.nome}\n${form.email}`;
     window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
   };
@@ -786,31 +750,31 @@ function Contato() {
   return (
     <section className="page contact-page">
       <Reveal tag="h1" className="contact-title">
-        Entre em contato
+        Get in touch
       </Reveal>
 
       <Reveal>
         <form className="contact-form" onSubmit={enviar}>
           <input
             type="text"
-            placeholder="Seu nome"
-            aria-label="Seu nome"
+            placeholder="Your name"
+            aria-label="Your name"
             required
             value={form.nome}
             onChange={campo('nome')}
           />
           <input
             type="email"
-            placeholder="Seu e-mail"
-            aria-label="Seu e-mail"
+            placeholder="Your email"
+            aria-label="Your email"
             required
             value={form.email}
             onChange={campo('email')}
           />
           <textarea
             rows="3"
-            placeholder="Escreva sua mensagem"
-            aria-label="Escreva sua mensagem"
+            placeholder="Write your message"
+            aria-label="Write your message"
             required
             value={form.mensagem}
             onChange={campo('mensagem')}
@@ -823,7 +787,7 @@ function Contato() {
               <ArrowIcon />
             </a>
             <button type="submit" className="contact-send">
-              Enviar
+              Send
             </button>
           </div>
         </form>
@@ -845,50 +809,50 @@ function Contato() {
 
 const PRIVACY = [
   {
-    title: '1. Informações gerais',
-    body: 'Esta Política de Privacidade descreve como este site trata as informações de quem o visita. Ao navegar por estas páginas, você concorda com as práticas aqui descritas.',
+    title: '1. General information',
+    body: 'This Privacy Policy describes how this website handles the information of those who visit it. By browsing these pages, you agree to the practices described here.',
   },
   {
-    title: '2. Dados coletados',
-    body: 'Este site é estático e não possui servidor próprio nem banco de dados. Não coletamos, armazenamos ou processamos dados pessoais como nome, e-mail, telefone ou endereço IP. O formulário da página de Contato não envia nada para lugar nenhum: ao clicar em Enviar, ele apenas abre o seu programa de e-mail com a mensagem já preenchida, e o envio parte de você. O que você digita permanece no seu dispositivo.',
+    title: '2. Data collected',
+    body: 'This is a static website with no server or database of its own. No personal data such as name, email, phone number or IP address is collected, stored or processed. The form on the Contact page does not send anything anywhere: clicking Send simply opens your own email client with the message already filled in, and you are the one who sends it. Whatever you type stays on your device.',
   },
   {
     title: '3. Cookies',
-    body: 'Não utilizamos cookies de rastreamento, publicidade ou análise de audiência. O site guarda apenas a sua preferência de tema (claro ou escuro) no armazenamento local do próprio navegador. Essa informação nunca sai do seu dispositivo e pode ser apagada a qualquer momento limpando os dados do navegador.',
+    body: 'No tracking, advertising or analytics cookies are used. The site only stores your theme preference (light or dark) in your own browser local storage. That information never leaves your device and can be erased at any time by clearing your browser data.',
   },
   {
-    title: '4. Serviços de terceiros',
-    body: 'As fontes tipográficas são carregadas do Google Fonts, que pode registrar o endereço IP da requisição conforme a política de privacidade do Google. O site também contém links para serviços externos como GitHub, LinkedIn e WhatsApp. Ao clicar neles, você passa a ser regido pelas políticas de privacidade desses serviços, sobre as quais não temos controle.',
+    title: '4. Third-party services',
+    body: 'Typefaces are loaded from Google Fonts, which may log the IP address of the request under Google own privacy policy. The site also links to external services such as GitHub, LinkedIn and WhatsApp. Once you click them, you are covered by the privacy policies of those services, over which this site has no control.',
   },
   {
-    title: '5. Hospedagem',
-    body: 'O provedor de hospedagem pode manter registros de acesso (logs) por motivos técnicos e de segurança, conforme suas próprias políticas.',
+    title: '5. Hosting',
+    body: 'The hosting provider may keep access logs for technical and security reasons, according to its own policies.',
   },
   {
-    title: '6. Segurança',
-    body: 'Este site é totalmente estático: não possui área de login, pagamentos ou qualquer campo que transmita informações suas para um servidor. O único formulário existente é o de contato, que apenas monta uma mensagem no seu próprio programa de e-mail. Como nada é enviado nem armazenado aqui, não existem dados pessoais neste site que possam vazar. A conexão é servida por HTTPS, o que criptografa todo o conteúdo trafegado entre o seu navegador e o servidor. Nenhuma página deste site solicita senha, dado bancário ou número de documento — se algo assim for pedido em nome deste site, desconfie.',
+    title: '6. Security',
+    body: 'This site is fully static: there is no login area, no payments and no field that transmits your information to a server. The only form is the contact one, and it merely composes a message in your own email client. Since nothing is sent or stored here, there is no personal data on this site that could leak. The connection is served over HTTPS, which encrypts everything travelling between your browser and the server. No page on this site asks for a password, banking details or an identity document number — if anything like that is ever requested in the name of this site, be suspicious.',
   },
   {
-    title: '7. Direitos do titular',
-    body: 'Como não realizamos coleta de dados pessoais, não há informações suas sob nossa guarda para acessar, corrigir ou excluir. Ainda assim, você pode entrar em contato pelos canais divulgados no site para esclarecer qualquer dúvida sobre esta política.',
+    title: '7. Your rights',
+    body: 'Since no personal data is collected, there is no information of yours held here to access, correct or delete. Even so, you can reach out through the channels listed on the site to clear up any question about this policy.',
   },
   {
-    title: '8. Alterações',
-    body: 'Esta política pode ser atualizada a qualquer momento para refletir mudanças no site. Recomendamos a consulta periódica a esta página.',
+    title: '8. Changes',
+    body: 'This policy may be updated at any time to reflect changes to the site. Checking this page periodically is recommended.',
   },
   {
-    title: '9. Contato',
-    body: `Em caso de dúvidas sobre esta Política de Privacidade, entre em contato pelo e-mail ${EMAIL}.`,
+    title: '9. Contact',
+    body: `If you have any questions about this Privacy Policy, get in touch at ${EMAIL}.`,
   },
 ];
 
-function Privacidade() {
+function Privacy() {
   return (
     <section className="page policy">
       <Reveal tag="h1" className="page-title">
-        Política de Privacidade
+        Privacy Policy
       </Reveal>
-      <p className="policy-updated">Última atualização: 27 de agosto de 2026</p>
+      <p className="policy-updated">Last updated: August 27, 2026</p>
 
       {PRIVACY.map(({ title, body }) => (
         <Reveal className="policy-block" key={title}>
@@ -902,18 +866,18 @@ function Privacidade() {
 
 const VIEWS = {
   home: Home,
-  privacidade: Privacidade,
-  sobre: Sobre,
-  projetos: Projetos,
-  experiencia: Experiencia,
+  privacy: Privacy,
+  about: About,
+  projects: Projects,
+  experience: Experience,
   links: Links,
-  contato: Contato,
+  contact: Contact,
 };
 
 export default function App() {
   const [page, setPage] = useState('home');
   const [menuOpen, setMenuOpen] = useState(false);
-  
+
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem('tema') === 'light' ? 'light' : 'dark';
@@ -927,13 +891,13 @@ export default function App() {
     try {
       localStorage.setItem('tema', theme);
     } catch {
-      
+
     }
   }, [theme]);
 
   useEffect(() => {
     setMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
     resetTyped();
   }, [page]);
 
@@ -964,7 +928,7 @@ export default function App() {
 
   return (
     <>
-      
+
       <div className="bg-blobs" aria-hidden="true">
         <span className="blob blob-1" />
         <span className="blob blob-2" />
@@ -1000,8 +964,8 @@ export default function App() {
             <button
               type="button"
               className="nav-theme"
-              title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-              aria-label={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               aria-pressed={theme === 'light'}
               onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
             >
@@ -1012,7 +976,7 @@ export default function App() {
           <button
             type="button"
             className={`hamburger${menuOpen ? ' active' : ''}`}
-            aria-label="Abrir menu"
+            aria-label="Open menu"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
           >
@@ -1032,7 +996,7 @@ export default function App() {
           <button
             type="button"
             className="mobile-menu-close"
-            aria-label="Fechar menu"
+            aria-label="Close menu"
             tabIndex={menuOpen ? 0 : -1}
             onClick={() => setMenuOpen(false)}
           >
@@ -1066,8 +1030,8 @@ export default function App() {
       <footer className="site-footer">
         <span className="footer-copy">© 2026</span>
 
-        <button type="button" className="footer-policy" onClick={() => setPage('privacidade')}>
-          Política de Privacidade
+        <button type="button" className="footer-policy" onClick={() => setPage('privacy')}>
+          Privacy Policy
         </button>
 
         <div className="footer-links">

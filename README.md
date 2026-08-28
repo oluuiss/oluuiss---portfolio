@@ -1,13 +1,12 @@
-# Portfólio — Luis Gustavo da Silva Porto
+# Portfolio — Luis Gustavo da Silva Porto
 
-Meu portfólio pessoal, reescrito em React com Vite. Site de página única, tema
-claro/escuro e navegação sem recarregar a página.
+My personal portfolio, rewritten in React with Vite. Single-page site, light/dark
+theme and navigation without reloading the page.
 
 🔗 [github.com/oluuiss](https://github.com/oluuiss) · [LinkedIn](https://www.linkedin.com/in/oluuiss/)
 
 ## Stack
 
-- **React 18** — interface e navegação entre as seções
-- **Vite 6** — servidor de desenvolvimento e build
-- **CSS puro** — sem framework; tema por variáveis CSS em `:root`
-
+- **React 18** — interface and navigation between sections
+- **Vite 6** — development server and build
+- **Plain CSS** — no framework; theming through CSS variables on `:root`
