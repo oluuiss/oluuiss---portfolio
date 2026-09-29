@@ -252,6 +252,13 @@ const PROJECTS = [
       'Group project built for a local business to strengthen customer trust. HTML, CSS and JavaScript.',
     href: 'https://github.com/oluuiss/web-site-for-enterprise',
   },
+  {
+    name: 'BrasaGrill',
+    image: '/assets/projetos/project4.png',
+    description:
+      'Digital menu for a grill restaurant, with the menu, cart and table booking available in English, German and Portuguese. Java, React and PostgreSQL.',
+    href: 'https://github.com/oluuiss/demo-menu',
+  },
 ];
 
 const TECH_ICONS = {
@@ -375,6 +382,11 @@ const TECHS = [
 
 const MAIN_SKILLS = ['Java', 'Spring Boot', 'React', 'Git', 'Swift', 'PostgreSQL'];
 const OPERATING_SYSTEMS = ['macOS', 'Windows', 'Ubuntu'];
+const LANGUAGES = [
+  { name: 'Portuguese', level: 'Native' },
+  { name: 'English', level: 'B2' },
+  { name: 'German', level: 'A2' },
+];
 
 const MARQUEE_REPEATS = 1;
 
@@ -405,7 +417,7 @@ function Home() {
 
       <div className="hero-content">
         <h1 className="hero-title">
-          <span>Backend Developer</span>
+          <span>FullStack Developer</span>
         </h1>
         <h2 className="hero-name">Luis Gustavo da Silva Porto</h2>
 
@@ -424,7 +436,7 @@ function Home() {
 }
 
 const SHOW_PHOTO = true;
-const PHOTO = '/assets/fotos/me.jpg';
+const PHOTO = '/assets/euabout.jpeg';
 
 const ABOUT_PARAGRAPHS = [
   'My name is Luis, I am 20 years old and a sixth-semester Computer Engineering student at Faculdade das Américas (FAM). Born in Fernandópolis, in the countryside of São Paulo, I moved to the capital looking for new opportunities, professional growth and challenges that would add to my education.',
@@ -451,6 +463,29 @@ const EXPERIENCE = [
       'Involvement in identifying needs and turning operational demands into technology solutions.',
     ],
     skills: ['HTML', 'CSS', 'JavaScript', 'React', 'VS Code', 'Git', 'PostgreSQL', 'Vercel'],
+    projects: [
+      {
+        name: 'LWN Engenharia',
+        caption: 'Company website',
+        href: 'https://lwnengenharia.vercel.app/',
+        description:
+          "The company's main website and its showcase to the market. It presents LWN's history, culture and leadership, the full range of services (cleanroom certification and qualification, HVAC-R testing, smoke tests and industrial gas qualification) and a direct channel for requesting a quote.",
+      },
+      {
+        name: 'LWN Customers',
+        caption: 'Customer journey',
+        href: 'https://lwn-customers.vercel.app/',
+        description:
+          "Internal platform that tracks each customer's journey from the sale to the work on site. Every stage (sale, scheduling, preparation and execution) is recorded in one place, giving the team full traceability and a clear view of where each customer stands. Access is restricted to the team, with email/CPF or Microsoft sign-in.",
+      },
+      {
+        name: 'LWN Control',
+        caption: 'Warehouse & tool control',
+        href: 'https://lwncontrol.vercel.app/',
+        description:
+          'My first project at the company. A warehouse system that controls the tools and measuring instruments used by the technical team, showing what is in stock, what is going out and what is already in the field, with traceability of every item from the warehouse to the job site.',
+      },
+    ],
   },
 ];
 
@@ -501,6 +536,16 @@ function About() {
           {OPERATING_SYSTEMS.map((name, i) => (
             <Reveal tag="span" className="os-chip" key={name} delay={i * 60} title={name}>
               <TechIcon name={name} />
+            </Reveal>
+          ))}
+        </div>
+
+        <div className="entry-skills">
+          <span className="entry-skills-label">Languages:</span>
+          {LANGUAGES.map(({ name, level }, i) => (
+            <Reveal tag="span" className="tech-chip" key={name} delay={i * 60}>
+              {name}
+              <span className="lang-level">{level}</span>
             </Reveal>
           ))}
         </div>
@@ -639,7 +684,7 @@ function Experience() {
       </ScrollTyped>
       <div className="xp-grid">
         {EXPERIENCE.map(
-          ({ logo, period, current, role, company, companyHref, summary, bullets, skills }) => (
+          ({ logo, period, current, role, company, companyHref, summary, bullets, skills, projects }) => (
             <Reveal tag="article" className="xp-entry" key={role + company}>
 
               <div className="xp-logo">
@@ -679,6 +724,24 @@ function Experience() {
                     </Reveal>
                   ))}
                 </div>
+
+                {projects && (
+                  <div className="xp-projects">
+                    <span className="entry-skills-label">Projects:</span>
+                    {projects.map(({ name, caption, href, description }, i) => (
+                      <Reveal className="xp-project" key={name} delay={i * 90}>
+                        <a className="xp-project-head" href={href} target="_blank" rel="noreferrer">
+                          <span className="xp-project-title">
+                            <span className="xp-project-name">{name}</span>
+                            <span className="xp-project-caption">{caption}</span>
+                          </span>
+                          <ArrowIcon />
+                        </a>
+                        <ScrollTyped className="xp-project-desc">{description}</ScrollTyped>
+                      </Reveal>
+                    ))}
+                  </div>
+                )}
               </div>
             </Reveal>
           )

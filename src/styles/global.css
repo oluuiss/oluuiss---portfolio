@@ -1124,6 +1124,15 @@ body {
   height: 19px;
 }
 
+.lang-level {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-tint);
+  color: var(--accent-soft);
+  font-size: 11px;
+  font-weight: bold;
+}
+
 .entry-doc {
   display: inline-flex;
   align-items: center;
@@ -1594,6 +1603,74 @@ body {
 
 .xp-entry .entry-skills {
   margin-top: 20px;
+}
+
+.xp-projects {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.xp-project {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.xp-project-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.xp-project-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+.xp-project-name {
+  font-size: 15px;
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.xp-project-head:hover .xp-project-name {
+  color: var(--accent-soft);
+}
+
+.xp-project-caption {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--accent-tint);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: var(--accent-soft);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.xp-project-head svg {
+  flex-shrink: 0;
+  margin-top: 5px;
+  color: var(--accent-soft);
+  transition: transform 0.2s ease;
+}
+
+.xp-project-head:hover svg {
+  transform: translate(2px, -2px);
+}
+
+.xp-project-desc {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.65;
 }
 
 @media (max-width: 620px) {
