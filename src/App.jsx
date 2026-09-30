@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import './styles/global.css';
+import { DEFAULT_LANGUAGE, SITE_LANGUAGES, TEXTS } from './i18n';
 
 function useReveal() {
   const ref = useRef(null);
@@ -232,34 +233,30 @@ const PAGES = ['about', 'projects', 'experience', 'links', 'contact'];
 
 const PROJECTS = [
   {
-    name: 'CRUD (Create, Read, Update, Delete)',
+    id: 'crud',
+    published: '2025-04-18',
     image: '/assets/projetos/project1.svg',
-    description:
-      'Create, search, edit and delete users in Java using a database through JDBC.',
     href: 'https://github.com/oluuiss/crud',
   },
   {
-    name: 'Spring CRUD',
+    id: 'spring-crud',
+    published: '2025-08-10',
     image: '/assets/projetos/springcrud.png',
-    description:
-      'Spring with Lombok, DevTools, PostgreSQL Driver, Spring Web, JPA, Validation and FlyWay Migration.',
-    href: 'https://github.com/oluuiss/demo-outback',
+    href: 'https://github.com/oluuiss/springcrud',
   },
   {
-    name: 'Website for a local business',
+    id: 'local-business',
+    published: '2024-08-31',
     image: '/assets/projetos/project3.svg',
-    description:
-      'Group project built for a local business to strengthen customer trust. HTML, CSS and JavaScript.',
     href: 'https://github.com/oluuiss/web-site-for-enterprise',
   },
   {
-    name: 'BrasaGrill',
+    id: 'digital-menu',
+    published: '2026-09-29',
     image: '/assets/projetos/project4.png',
-    description:
-      'Digital menu for a grill restaurant, with the menu, cart and table booking available in English, German and Portuguese. Java, React and PostgreSQL.',
     href: 'https://github.com/oluuiss/demo-menu',
   },
-];
+].sort((a, b) => b.published.localeCompare(a.published));
 
 const TECH_ICONS = {
   Java: () => (
@@ -353,6 +350,11 @@ const TECH_ICONS = {
       <path d="m15 7.5 5 4.5-5 4.5" />
     </svg>
   ),
+  Neon: () => (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M24 0V24l-9.365-8.045V24H0V0ZM2.942 21.087h8.751V9.563l9.365 8.204V2.919L2.942 2.914Z" />
+    </svg>
+  ),
   Vercel: () => (
     <svg viewBox="0 0 24 24" fill="currentColor">
       <path d="M12 3.2 22.4 20.8H1.6L12 3.2Z" />
@@ -382,11 +384,6 @@ const TECHS = [
 
 const MAIN_SKILLS = ['Java', 'Spring Boot', 'React', 'Git', 'Swift', 'PostgreSQL'];
 const OPERATING_SYSTEMS = ['macOS', 'Windows', 'Ubuntu'];
-const LANGUAGES = [
-  { name: 'Portuguese', level: 'Native' },
-  { name: 'English', level: 'B2' },
-  { name: 'German', level: 'A2' },
-];
 
 const MARQUEE_REPEATS = 1;
 
@@ -411,13 +408,13 @@ function LogoMarquee() {
   );
 }
 
-function Home() {
+function Home({ t }) {
   return (
     <section className="hero">
 
       <div className="hero-content">
         <h1 className="hero-title">
-          <span>FullStack Developer</span>
+          <span>{t.home.title}</span>
         </h1>
         <h2 className="hero-name">Luis Gustavo da Silva Porto</h2>
 
@@ -438,91 +435,49 @@ function Home() {
 const SHOW_PHOTO = true;
 const PHOTO = '/assets/euabout.jpeg';
 
-const ABOUT_PARAGRAPHS = [
-  'My name is Luis, I am 20 years old and a sixth-semester Computer Engineering student at Faculdade das Américas (FAM). Born in Fernandópolis, in the countryside of São Paulo, I moved to the capital looking for new opportunities, professional growth and challenges that would add to my education.',
-  'My path with technology started early. At 13 I was already building small projects with JavaScript, Node.js and Replit, mostly Discord bots. That experience sparked my interest in programming and, over the years, grew into a real passion for technology and software development. At 18 I began my Computer Engineering degree at UNIFEV, where I stayed until the fourth semester, when I moved to São Paulo and carried my studies on at FAM. Since then I have been building academic and personal projects that let me put into practice what I learn throughout the degree.',
-  'My main focus is Back-end development, with a particular interest in the Java and Spring Boot ecosystem, where I have been concentrating my studies and projects. I aim to build robust, scalable and well-structured applications, applying clean code principles, good development practices and solid software organisation. Beyond Java and Spring Boot, I have experience with Swift for development in the Apple ecosystem, MySQL and PostgreSQL for modelling and managing relational databases, Node.js for back-end solutions and C for programming fundamentals and low-level systems. I also use Git and GitHub for version control and collaboration on projects.',
-  'My education is driven by a constant pursuit of technical and professional growth. I try to turn every project and every challenge into a learning opportunity, deepening both my hands-on knowledge and my theoretical foundation. My goal is to keep growing as a developer, contributing to efficient, scalable solutions with real impact.',
-];
-
 const EXPERIENCE = [
   {
+    id: 'lwn',
     logo: '/assets/logos/lwn.png',
-    period: 'Jul 2026',
     current: true,
-    role: 'Full-Stack Intern',
     company: 'LWN Team Análise',
     companyHref: 'https://lwnengenharia.com.br/',
-    summary:
-      'Development and maintenance of technology solutions that optimise internal processes, focused on automation, data control and operational improvement.',
-    bullets: [
-      'Development and maintenance of web & mobile applications.',
-      'Design and integration of PostgreSQL databases.',
-      'Analysis and troubleshooting of issues in existing systems.',
-      'Development of dashboards and data analysis solutions.',
-      'Involvement in identifying needs and turning operational demands into technology solutions.',
-    ],
-    skills: ['HTML', 'CSS', 'JavaScript', 'React', 'VS Code', 'Git', 'PostgreSQL', 'Vercel'],
+    skills: ['HTML', 'CSS', 'JavaScript', 'React', 'VS Code', 'Git', 'PostgreSQL', 'Neon', 'Vercel'],
     projects: [
-      {
-        name: 'LWN Engenharia',
-        caption: 'Company website',
-        href: 'https://lwnengenharia.vercel.app/',
-        description:
-          "The company's main website and its showcase to the market. It presents LWN's history, culture and leadership, the full range of services (cleanroom certification and qualification, HVAC-R testing, smoke tests and industrial gas qualification) and a direct channel for requesting a quote.",
-      },
-      {
-        name: 'LWN Customers',
-        caption: 'Customer journey',
-        href: 'https://lwn-customers.vercel.app/',
-        description:
-          "Internal platform that tracks each customer's journey from the sale to the work on site. Every stage (sale, scheduling, preparation and execution) is recorded in one place, giving the team full traceability and a clear view of where each customer stands. Access is restricted to the team, with email/CPF or Microsoft sign-in.",
-      },
-      {
-        name: 'LWN Control',
-        caption: 'Warehouse & tool control',
-        href: 'https://lwncontrol.vercel.app/',
-        description:
-          'My first project at the company. A warehouse system that controls the tools and measuring instruments used by the technical team, showing what is in stock, what is going out and what is already in the field, with traceability of every item from the warehouse to the job site.',
-      },
+      { id: 'lwn-engenharia', name: 'LWN Engenharia', href: 'https://lwnengenharia.vercel.app/' },
+      { id: 'lwn-customers', name: 'LWN Customers', href: 'https://lwn-customers.vercel.app/' },
+      { id: 'lwn-control', name: 'LWN Control', href: 'https://lwncontrol.vercel.app/' },
     ],
   },
 ];
 
-const EDUCATION = [
-  {
-    course: 'Computer Engineering',
-    school: 'Faculdade das Americas (FAM) - São Paulo - SP, Brazil.',
-    period: '2024 — 2028',
-    kind: "Bachelor's Degree",
-  },
-];
+const EDUCATION = [{ id: 'fam', period: '2024 — 2028' }];
 
 const CERTIFICATES = [
   {
-    course: 'Web Programming with emphasis on PHP and Java',
+    id: 'via-certa',
     school: 'Via Certa Cursos — Fernandópolis',
-    period: '2021 — 2022 · 121 hours',
+    period: '2021 — 2022',
     href: 'https://drive.google.com/file/d/1h3GONblORzY8WXS76wM0N02nvdhYxcij/view?usp=sharing',
   },
 ];
 
-function About() {
+function About({ t }) {
   const [photoOk, setPhotoOk] = useState(true);
 
   return (
     <section className="page about">
       <div className="about-main">
         <ScrollTyped tag="h1" className="about-title">
-          About me
+          {t.about.title}
         </ScrollTyped>
 
-        {ABOUT_PARAGRAPHS.map((text, i) => (
+        {t.about.paragraphs.map((text, i) => (
           <ScrollTyped key={i}>{text}</ScrollTyped>
         ))}
 
         <div className="entry-skills">
-          <span className="entry-skills-label">Skills:</span>
+          <span className="entry-skills-label">{t.about.skills}</span>
           {MAIN_SKILLS.map((name, i) => (
             <Reveal tag="span" className="tech-chip" key={name} delay={i * 60}>
               <TechIcon name={name} />
@@ -532,7 +487,7 @@ function About() {
         </div>
 
         <div className="entry-skills">
-          <span className="entry-skills-label">O.S:</span>
+          <span className="entry-skills-label">{t.about.os}</span>
           {OPERATING_SYSTEMS.map((name, i) => (
             <Reveal tag="span" className="os-chip" key={name} delay={i * 60} title={name}>
               <TechIcon name={name} />
@@ -541,42 +496,48 @@ function About() {
         </div>
 
         <div className="entry-skills">
-          <span className="entry-skills-label">Languages:</span>
-          {LANGUAGES.map(({ name, level }, i) => (
-            <Reveal tag="span" className="tech-chip" key={name} delay={i * 60}>
+          <span className="entry-skills-label">{t.about.languages}</span>
+          {t.about.spoken.map(({ name, level }, i) => (
+            <Reveal tag="span" className="tech-chip" key={i} delay={i * 60}>
               {name}
               <span className="lang-level">{level}</span>
             </Reveal>
           ))}
         </div>
 
-        <ScrollTyped tag="h2">Education</ScrollTyped>
-        {EDUCATION.map(({ course, school, period, kind }) => (
-          <Reveal className="entry" key={course}>
-            <ScrollTyped tag="h3">{course}</ScrollTyped>
-            <ScrollTyped className="entry-meta">{`${school} · ${period} · ${kind}`}</ScrollTyped>
-          </Reveal>
-        ))}
+        <ScrollTyped tag="h2">{t.about.education}</ScrollTyped>
+        {EDUCATION.map(({ id, period }) => {
+          const { course, school, kind } = t.education[id];
+          return (
+            <Reveal className="entry" key={id}>
+              <ScrollTyped tag="h3">{course}</ScrollTyped>
+              <ScrollTyped className="entry-meta">{`${school} · ${period} · ${kind}`}</ScrollTyped>
+            </Reveal>
+          );
+        })}
 
-        <ScrollTyped tag="h2">Certificates</ScrollTyped>
-        {CERTIFICATES.map(({ course, school, period, href }) => (
-          <Reveal className="entry" key={course}>
-            <h3>
-              {course}
-              <a
-                className="entry-doc"
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                title="View certificate"
-                aria-label={`View certificate: ${course}`}
-              >
-                <DocIcon />
-              </a>
-            </h3>
-            <ScrollTyped className="entry-meta">{`${school} · ${period}`}</ScrollTyped>
-          </Reveal>
-        ))}
+        <ScrollTyped tag="h2">{t.about.certificates}</ScrollTyped>
+        {CERTIFICATES.map(({ id, school, period, href }) => {
+          const { course, hours } = t.certificates[id];
+          return (
+            <Reveal className="entry" key={id}>
+              <h3>
+                {course}
+                <a
+                  className="entry-doc"
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  title={t.about.viewCertificate}
+                  aria-label={`${t.about.viewCertificate}: ${course}`}
+                >
+                  <DocIcon />
+                </a>
+              </h3>
+              <ScrollTyped className="entry-meta">{`${school} · ${period} · ${hours}`}</ScrollTyped>
+            </Reveal>
+          );
+        })}
       </div>
 
       <aside className="about-side">
@@ -615,23 +576,24 @@ function About() {
   );
 }
 
-function Projects() {
+function Projects({ t }) {
 
   const [aberto, setAberto] = useState(null);
 
   return (
     <section className="page">
       <ScrollTyped tag="h1" className="page-title">
-        Projects
+        {t.projects.title}
       </ScrollTyped>
       <div className="project-grid">
-        {PROJECTS.map(({ name, image, description, href }, i) => {
+        {PROJECTS.map(({ id, image, href }, i) => {
+          const { name, description } = t.projects.items[id];
           const open = aberto === i;
           return (
             <Reveal
               tag="article"
               className={`project-card${open ? ' is-open' : ''}`}
-              key={name}
+              key={id}
               delay={i * 110}
             >
 
@@ -657,11 +619,11 @@ function Projects() {
                       href={href}
                       target="_blank"
                       rel="noreferrer"
-                      title={`View ${name} on GitHub`}
+                      title={t.projects.viewNameOnGithub.replace('{name}', name)}
                     >
                       <img src={image} alt={name} loading="lazy" />
                       <span className="project-shot-label">
-                        View on GitHub
+                        {t.projects.viewOnGithub}
                         <ArrowIcon />
                       </span>
                     </a>
@@ -676,16 +638,17 @@ function Projects() {
   );
 }
 
-function Experience() {
+function Experience({ t }) {
   return (
     <section className="page page-narrow">
       <ScrollTyped tag="h1" className="page-title">
-        Experience
+        {t.experience.title}
       </ScrollTyped>
       <div className="xp-grid">
-        {EXPERIENCE.map(
-          ({ logo, period, current, role, company, companyHref, summary, bullets, skills, projects }) => (
-            <Reveal tag="article" className="xp-entry" key={role + company}>
+        {EXPERIENCE.map(({ id, logo, current, company, companyHref, skills, projects }) => {
+          const { period, role, summary, bullets, projects: projectTexts } = t.experience.items[id];
+          return (
+            <Reveal tag="article" className="xp-entry" key={id}>
 
               <div className="xp-logo">
                 <img src={logo} alt={company} />
@@ -701,22 +664,22 @@ function Experience() {
                 <p className="xp-period">
                   {period} <span className="xp-dash">-</span>{' '}
                   <span className={current ? 'xp-current' : undefined}>
-                    {current ? 'Present' : ''}
+                    {current ? t.experience.present : ''}
                   </span>
                 </p>
 
                 <ScrollTyped className="xp-summary">{summary}</ScrollTyped>
 
                 <ul className="xp-bullets">
-                  {bullets.map((b) => (
-                    <ScrollTyped tag="li" key={b}>
+                  {bullets.map((b, i) => (
+                    <ScrollTyped tag="li" key={i}>
                       {b}
                     </ScrollTyped>
                   ))}
                 </ul>
 
                 <div className="entry-skills">
-                  <span className="entry-skills-label">Skills:</span>
+                  <span className="entry-skills-label">{t.experience.skills}</span>
                   {skills.map((name, i) => (
                     <Reveal tag="span" className="tech-chip" key={name} delay={i * 60}>
                       <TechIcon name={name} />
@@ -727,25 +690,28 @@ function Experience() {
 
                 {projects && (
                   <div className="xp-projects">
-                    <span className="entry-skills-label">Projects:</span>
-                    {projects.map(({ name, caption, href, description }, i) => (
-                      <Reveal className="xp-project" key={name} delay={i * 90}>
-                        <a className="xp-project-head" href={href} target="_blank" rel="noreferrer">
-                          <span className="xp-project-title">
-                            <span className="xp-project-name">{name}</span>
-                            <span className="xp-project-caption">{caption}</span>
-                          </span>
-                          <ArrowIcon />
-                        </a>
-                        <ScrollTyped className="xp-project-desc">{description}</ScrollTyped>
-                      </Reveal>
-                    ))}
+                    <span className="entry-skills-label">{t.experience.projects}</span>
+                    {projects.map(({ id: projectId, name, href }, i) => {
+                      const { caption, description } = projectTexts[projectId];
+                      return (
+                        <Reveal className="xp-project" key={projectId} delay={i * 90}>
+                          <a className="xp-project-head" href={href} target="_blank" rel="noreferrer">
+                            <span className="xp-project-title">
+                              <span className="xp-project-name">{name}</span>
+                              <span className="xp-project-caption">{caption}</span>
+                            </span>
+                            <ArrowIcon />
+                          </a>
+                          <ScrollTyped className="xp-project-desc">{description}</ScrollTyped>
+                        </Reveal>
+                      );
+                    })}
                   </div>
                 )}
               </div>
             </Reveal>
-          )
-        )}
+          );
+        })}
       </div>
     </section>
   );
@@ -758,25 +724,24 @@ const ALL_LINKS = [
 
   { label: 'Discord', href: 'https://discord.gg/A6QeZc6p', icon: '/assets/logos/discord.png', breakAfter: true },
   { label: 'WhatsApp', href: PHONE_LINK, Icon: WhatsAppIcon },
-  { label: 'Email', href: `mailto:${EMAIL}`, Icon: MailIcon },
+  { label: 'Email', translated: true, href: `mailto:${EMAIL}`, Icon: MailIcon },
   { label: 'PlayStation', href: 'https://profile.playstation.com/yLuisss', icon: '/assets/logos/playstation.png' },
 ];
 
-function Links() {
+function Links({ t }) {
   return (
     <section className="page links-page">
       <Reveal tag="h1" className="links-title">
-        I am all over the internet
+        {t.links.title}
       </Reveal>
 
       <Reveal tag="p" className="links-intro">
-        My curiosity has always taken me far: between code, games, study and conversation, this
-        is where you find me.
+        {t.links.intro}
       </Reveal>
 
       <div className="links-grid">
-        {ALL_LINKS.map(({ label, href, Icon, icon, breakAfter }, i) => (
-          <Fragment key={label}>
+        {ALL_LINKS.map(({ label, translated, href, Icon, icon, breakAfter }, i) => (
+          <Fragment key={href}>
             <Reveal delay={i * 70}>
               <a
                 className="link-item"
@@ -786,7 +751,7 @@ function Links() {
               >
 
                 {icon ? <img src={icon} alt="" draggable="false" /> : <Icon width="19" height="19" />}
-                <span>{label}</span>
+                <span>{translated ? t.links.email : label}</span>
               </a>
             </Reveal>
 
@@ -798,14 +763,14 @@ function Links() {
   );
 }
 
-function Contact() {
+function Contact({ t }) {
   const [form, setForm] = useState({ nome: '', email: '', mensagem: '' });
 
   const campo = (chave) => (e) => setForm((f) => ({ ...f, [chave]: e.target.value }));
 
   const enviar = (e) => {
     e.preventDefault();
-    const assunto = `Portfolio contact — ${form.nome}`;
+    const assunto = t.contact.subject.replace('{name}', form.nome);
     const corpo = `${form.mensagem}\n\n—\n${form.nome}\n${form.email}`;
     window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
   };
@@ -813,31 +778,31 @@ function Contact() {
   return (
     <section className="page contact-page">
       <Reveal tag="h1" className="contact-title">
-        Get in touch
+        {t.contact.title}
       </Reveal>
 
       <Reveal>
         <form className="contact-form" onSubmit={enviar}>
           <input
             type="text"
-            placeholder="Your name"
-            aria-label="Your name"
+            placeholder={t.contact.name}
+            aria-label={t.contact.name}
             required
             value={form.nome}
             onChange={campo('nome')}
           />
           <input
             type="email"
-            placeholder="Your email"
-            aria-label="Your email"
+            placeholder={t.contact.email}
+            aria-label={t.contact.email}
             required
             value={form.email}
             onChange={campo('email')}
           />
           <textarea
             rows="3"
-            placeholder="Write your message"
-            aria-label="Write your message"
+            placeholder={t.contact.message}
+            aria-label={t.contact.message}
             required
             value={form.mensagem}
             onChange={campo('mensagem')}
@@ -850,7 +815,7 @@ function Contact() {
               <ArrowIcon />
             </a>
             <button type="submit" className="contact-send">
-              Send
+              {t.contact.send}
             </button>
           </div>
         </form>
@@ -870,60 +835,115 @@ function Contact() {
   );
 }
 
-const PRIVACY = [
-  {
-    title: '1. General information',
-    body: 'This Privacy Policy describes how this website handles the information of those who visit it. By browsing these pages, you agree to the practices described here.',
-  },
-  {
-    title: '2. Data collected',
-    body: 'This is a static website with no server or database of its own. No personal data such as name, email, phone number or IP address is collected, stored or processed. The form on the Contact page does not send anything anywhere: clicking Send simply opens your own email client with the message already filled in, and you are the one who sends it. Whatever you type stays on your device.',
-  },
-  {
-    title: '3. Cookies',
-    body: 'No tracking, advertising or analytics cookies are used. The site only stores your theme preference (light or dark) in your own browser local storage. That information never leaves your device and can be erased at any time by clearing your browser data.',
-  },
-  {
-    title: '4. Third-party services',
-    body: 'Typefaces are loaded from Google Fonts, which may log the IP address of the request under Google own privacy policy. The site also links to external services such as GitHub, LinkedIn and WhatsApp. Once you click them, you are covered by the privacy policies of those services, over which this site has no control.',
-  },
-  {
-    title: '5. Hosting',
-    body: 'The hosting provider may keep access logs for technical and security reasons, according to its own policies.',
-  },
-  {
-    title: '6. Security',
-    body: 'This site is fully static: there is no login area, no payments and no field that transmits your information to a server. The only form is the contact one, and it merely composes a message in your own email client. Since nothing is sent or stored here, there is no personal data on this site that could leak. The connection is served over HTTPS, which encrypts everything travelling between your browser and the server. No page on this site asks for a password, banking details or an identity document number — if anything like that is ever requested in the name of this site, be suspicious.',
-  },
-  {
-    title: '7. Your rights',
-    body: 'Since no personal data is collected, there is no information of yours held here to access, correct or delete. Even so, you can reach out through the channels listed on the site to clear up any question about this policy.',
-  },
-  {
-    title: '8. Changes',
-    body: 'This policy may be updated at any time to reflect changes to the site. Checking this page periodically is recommended.',
-  },
-  {
-    title: '9. Contact',
-    body: `If you have any questions about this Privacy Policy, get in touch at ${EMAIL}.`,
-  },
-];
-
-function Privacy() {
+function Privacy({ t }) {
   return (
     <section className="page policy">
       <Reveal tag="h1" className="page-title">
-        Privacy Policy
+        {t.privacy.title}
       </Reveal>
-      <p className="policy-updated">Last updated: August 27, 2026</p>
+      <p className="policy-updated">{t.privacy.updated}</p>
 
-      {PRIVACY.map(({ title, body }) => (
-        <Reveal className="policy-block" key={title}>
+      {t.privacy.sections.map(({ title, body }, i) => (
+        <Reveal className="policy-block" key={i}>
           <h2>{title}</h2>
-          <p>{body}</p>
+          <p>{body.replace('{email}', EMAIL)}</p>
         </Reveal>
       ))}
     </section>
+  );
+}
+
+const US_STRIPES = [0, 2, 4, 6, 8, 10, 12];
+
+const FLAGS = {
+  en: () => (
+    <svg viewBox="0 0 30 20">
+      <rect width="30" height="20" fill="#ffffff" />
+      {US_STRIPES.map((i) => (
+        <rect key={i} y={(i * 20) / 13} width="30" height={20 / 13} fill="#b22234" />
+      ))}
+      <rect width="13" height={(7 * 20) / 13} fill="#3c3b6e" />
+    </svg>
+  ),
+  de: () => (
+    <svg viewBox="0 0 30 20">
+      <rect width="30" height="20" fill="#ffce00" />
+      <rect width="30" height="13.34" fill="#dd0000" />
+      <rect width="30" height="6.67" fill="#000000" />
+    </svg>
+  ),
+  pt: () => (
+    <svg viewBox="0 0 30 20">
+      <rect width="30" height="20" fill="#009c3b" />
+      <path d="M15 2.5 27.5 10 15 17.5 2.5 10Z" fill="#ffdf00" />
+      <circle cx="15" cy="10" r="5.2" fill="#002776" />
+      <path d="M9.9 9.2Q15 7.6 20.1 11" fill="none" stroke="#ffffff" strokeWidth="0.9" />
+    </svg>
+  ),
+};
+
+function LanguagePicker({ lang, onChange, label }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointer = (e) => {
+      if (!ref.current.contains(e.target)) setOpen(false);
+    };
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+
+    addEventListener('pointerdown', onPointer);
+    addEventListener('keydown', onKey);
+    return () => {
+      removeEventListener('pointerdown', onPointer);
+      removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div className="nav-lang" ref={ref}>
+      <button
+        type="button"
+        className={`nav-lang-toggle${open ? ' is-open' : ''}`}
+        title={label}
+        aria-label={label}
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <ChevronIcon />
+      </button>
+
+      <ul className={`nav-lang-menu${open ? ' is-open' : ''}`} aria-hidden={!open}>
+        {SITE_LANGUAGES.map(({ id, label: name, html }) => {
+          const Flag = FLAGS[id];
+          return (
+            <li key={id}>
+              <button
+                type="button"
+                lang={html}
+                className={lang === id ? 'active' : undefined}
+                aria-current={lang === id ? 'true' : undefined}
+                tabIndex={open ? 0 : -1}
+                onClick={() => {
+                  onChange(id);
+                  setOpen(false);
+                }}
+              >
+                <span className="nav-lang-flag" aria-hidden="true">
+                  <Flag />
+                </span>
+                {name}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 
@@ -957,6 +977,26 @@ export default function App() {
 
     }
   }, [theme]);
+
+  const [lang, setLang] = useState(() => {
+    try {
+      const salvo = localStorage.getItem('idioma');
+      return SITE_LANGUAGES.some(({ id }) => id === salvo) ? salvo : DEFAULT_LANGUAGE;
+    } catch {
+      return DEFAULT_LANGUAGE;
+    }
+  });
+
+  useEffect(() => {
+    document.documentElement.lang = SITE_LANGUAGES.find(({ id }) => id === lang).html;
+    try {
+      localStorage.setItem('idioma', lang);
+    } catch {
+
+    }
+  }, [lang]);
+
+  const t = TEXTS[lang];
 
   useEffect(() => {
     setMenuOpen(false);
@@ -1012,7 +1052,7 @@ export default function App() {
                 className={`nav-item${page === id ? ' active' : ''}`}
                 onClick={() => setPage(id)}
               >
-                {id}
+                {t.nav[id]}
               </button>
             ))}
           </div>
@@ -1027,19 +1067,20 @@ export default function App() {
             <button
               type="button"
               className="nav-theme"
-              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? t.ui.lightMode : t.ui.darkMode}
+              aria-label={theme === 'dark' ? t.ui.toLight : t.ui.toDark}
               aria-pressed={theme === 'light'}
-              onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+              onClick={() => setTheme((atual) => (atual === 'dark' ? 'light' : 'dark'))}
             >
               <ThemeIcon />
             </button>
+            <LanguagePicker lang={lang} onChange={setLang} label={t.ui.language} />
           </div>
 
           <button
             type="button"
             className={`hamburger${menuOpen ? ' active' : ''}`}
-            aria-label="Open menu"
+            aria-label={t.ui.openMenu}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
           >
@@ -1059,7 +1100,7 @@ export default function App() {
           <button
             type="button"
             className="mobile-menu-close"
-            aria-label="Close menu"
+            aria-label={t.ui.closeMenu}
             tabIndex={menuOpen ? 0 : -1}
             onClick={() => setMenuOpen(false)}
           >
@@ -1078,7 +1119,7 @@ export default function App() {
                   setMenuOpen(false);
                 }}
               >
-                {id}
+                {t.nav[id]}
               </button>
             ))}
           </nav>
@@ -1087,14 +1128,14 @@ export default function App() {
       </header>
 
       <main className="page-shell" key={page}>
-        <View />
+        <View t={t} />
       </main>
 
       <footer className="site-footer">
         <span className="footer-copy">© 2026</span>
 
         <button type="button" className="footer-policy" onClick={() => setPage('privacy')}>
-          Privacy Policy
+          {t.privacy.title}
         </button>
 
         <div className="footer-links">

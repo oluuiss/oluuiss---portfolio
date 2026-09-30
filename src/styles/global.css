@@ -331,6 +331,116 @@ body {
   }
 }
 
+.nav-lang {
+  position: relative;
+  display: flex;
+  margin-left: 2px;
+}
+
+.nav-lang-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent-soft);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.nav-lang-toggle:hover,
+.nav-lang-toggle.is-open {
+  background-color: var(--accent-tint);
+}
+
+.nav-lang-toggle svg {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-lang-toggle.is-open svg {
+  transform: rotate(180deg);
+}
+
+.nav-lang-menu {
+  position: absolute;
+  top: calc(100% + 28px);
+  right: -10px;
+  min-width: 200px;
+  list-style: none;
+  padding: 6px;
+  border-radius: 14px;
+  background: var(--glass-strong);
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.25s;
+}
+
+.nav-lang-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.nav-lang-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-lang-menu button:hover {
+  background-color: var(--accent-tint);
+  color: var(--accent-soft);
+}
+
+.nav-lang-menu button.active {
+  background-color: var(--accent-tint-strong);
+  color: var(--accent-soft);
+}
+
+.nav-lang-flag {
+  display: flex;
+  flex-shrink: 0;
+  width: 24px;
+  height: 16px;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--border-strong);
+}
+
+.nav-lang-flag svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-lang-toggle svg,
+  .nav-lang-menu {
+    transition: none;
+  }
+}
+
 .hamburger {
   display: none;
   position: relative;
