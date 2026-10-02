@@ -64,10 +64,15 @@ const en = {
     viewOnGithub: 'View on GitHub',
     viewNameOnGithub: 'View {name} on GitHub',
     items: {
+      saas: {
+        name: 'SaaS',
+        description:
+          'SaaS for restaurants: each one gets its own website, editable right on the page, with a digital menu, delivery, table booking, promotions and email campaigns, plus a dashboard for tables, orders, staff and finances. React.js, Node.js & Neon (PostgreSQL)',
+      },
       'digital-menu': {
         name: 'Digital Menu',
         description:
-          'Menu for a grill restaurant where customers browse the dishes, fill a cart and book a table, available in English, German and Portuguese. Java, React and PostgreSQL.',
+          'Demo digital menu with cart, checkout, login, delivery and table booking. Java, React.js & PostgreSQL',
       },
       'spring-crud': {
         name: 'Spring CRUD',
@@ -90,6 +95,7 @@ const en = {
     present: 'Present',
     skills: 'Skills:',
     projects: 'Projects:',
+    visitSite: 'Visit website',
     items: {
       lwn: {
         period: 'Jul 2026',
@@ -239,10 +245,15 @@ const de = {
     viewOnGithub: 'Auf GitHub ansehen',
     viewNameOnGithub: '{name} auf GitHub ansehen',
     items: {
+      saas: {
+        name: 'SaaS',
+        description:
+          'SaaS für Restaurants: Jedes erhält eine eigene Website, die sich direkt auf der Seite bearbeiten lässt, mit digitaler Speisekarte, Lieferservice, Tischreservierung, Aktionen und E-Mail-Kampagnen, dazu ein Dashboard für Tische, Bestellungen, Team und Finanzen. React.js, Node.js & Neon (PostgreSQL)',
+      },
       'digital-menu': {
         name: 'Digitale Speisekarte',
         description:
-          'Speisekarte für ein Grillrestaurant, in der Gäste die Gerichte durchstöbern, einen Warenkorb füllen und einen Tisch reservieren können – auf Englisch, Deutsch und Portugiesisch. Java, React und PostgreSQL.',
+          'Digitale Demo-Speisekarte mit Warenkorb, Checkout, Login, Lieferung und Tischreservierung. Java, React.js & PostgreSQL',
       },
       'spring-crud': {
         name: 'Spring CRUD',
@@ -266,6 +277,7 @@ const de = {
     present: 'Heute',
     skills: 'Skills:',
     projects: 'Projekte:',
+    visitSite: 'Website besuchen',
     items: {
       lwn: {
         period: 'Juli 2026',
@@ -415,10 +427,15 @@ const pt = {
     viewOnGithub: 'Ver no GitHub',
     viewNameOnGithub: 'Ver {name} no GitHub',
     items: {
+      saas: {
+        name: 'SaaS',
+        description:
+          'SaaS para restaurantes: cada um ganha um site próprio, editável direto na tela, com cardápio digital, delivery, reservas de mesa, promoções e disparo de email, além de um painel para mesas, pedidos, equipe e financeiro. React.js, Node.js & Neon (PostgreSQL)',
+      },
       'digital-menu': {
         name: 'Cardápio Digital',
         description:
-          'Cardápio para uma churrascaria, onde o cliente navega pelos pratos, monta o carrinho e reserva uma mesa, disponível em inglês, alemão e português. Java, React e PostgreSQL.',
+          'Cardápio digital de demonstração com carrinho, checkout, login, delivery e reserva de mesas. Java, React.js & PostgreSQL',
       },
       'spring-crud': {
         name: 'Spring CRUD',
@@ -442,6 +459,7 @@ const pt = {
     present: 'Atualmente',
     skills: 'Skills:',
     projects: 'Projetos:',
+    visitSite: 'Acessar site',
     items: {
       lwn: {
         period: 'Jul 2026',

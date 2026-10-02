@@ -247,7 +247,7 @@ const PROJECTS = [
   {
     id: 'local-business',
     published: '2024-08-31',
-    image: '/assets/projetos/project3.svg',
+    image: '/assets/projetos/project1website.png',
     href: 'https://github.com/oluuiss/web-site-for-enterprise',
   },
   {
@@ -255,6 +255,12 @@ const PROJECTS = [
     published: '2026-09-29',
     image: '/assets/projetos/project4.png',
     href: 'https://github.com/oluuiss/demo-menu',
+  },
+  {
+    id: 'saas',
+    published: '2026-10-01',
+    image: '/assets/projetos/project5saas.png',
+    href: 'https://github.com/oluuiss/saas-restaurant',
   },
 ].sort((a, b) => b.published.localeCompare(a.published));
 
@@ -639,6 +645,8 @@ function Projects({ t }) {
 }
 
 function Experience({ t }) {
+  const [aberto, setAberto] = useState(null);
+
   return (
     <section className="page page-narrow">
       <ScrollTyped tag="h1" className="page-title">
@@ -693,16 +701,41 @@ function Experience({ t }) {
                     <span className="entry-skills-label">{t.experience.projects}</span>
                     {projects.map(({ id: projectId, name, href }, i) => {
                       const { caption, description } = projectTexts[projectId];
+                      const open = aberto === projectId;
                       return (
-                        <Reveal className="xp-project" key={projectId} delay={i * 90}>
-                          <a className="xp-project-head" href={href} target="_blank" rel="noreferrer">
+                        <Reveal
+                          className={`xp-project${open ? ' is-open' : ''}`}
+                          key={projectId}
+                          delay={i * 90}
+                        >
+                          <button
+                            type="button"
+                            className="xp-project-head"
+                            aria-expanded={open}
+                            onClick={() => setAberto(open ? null : projectId)}
+                          >
                             <span className="xp-project-title">
                               <span className="xp-project-name">{name}</span>
                               <span className="xp-project-caption">{caption}</span>
                             </span>
-                            <ArrowIcon />
-                          </a>
-                          <ScrollTyped className="xp-project-desc">{description}</ScrollTyped>
+                            <ChevronIcon />
+                          </button>
+
+                          <div className="xp-project-fold" aria-hidden={!open}>
+                            <div className="xp-project-fold-inner">
+                              <p className="xp-project-desc">{description}</p>
+                              <a
+                                className="xp-project-link"
+                                href={href}
+                                target="_blank"
+                                rel="noreferrer"
+                                tabIndex={open ? 0 : -1}
+                              >
+                                {t.experience.visitSite}
+                                <ArrowIcon />
+                              </a>
+                            </div>
+                          </div>
                         </Reveal>
                       );
                     })}

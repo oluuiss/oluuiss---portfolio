@@ -3,7 +3,7 @@
 My personal portfolio, rewritten in React with Vite. Single-page site, light/dark
 theme and navigation without reloading the page.
 
-🔗 [github.com/oluuiss](https://github.com/oluuiss) · [LinkedIn](https://www.linkedin.com/in/oluuiss/)
+🔗 [oluuiss.com](https://oluuiss.com) · [LinkedIn](https://www.linkedin.com/in/oluuiss/)
 
 ## Stack
 
