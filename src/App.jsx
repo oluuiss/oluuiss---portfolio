@@ -259,7 +259,7 @@ const PROJECTS = [
   {
     id: 'saas',
     published: '2026-10-01',
-    image: '/assets/projetos/project5saas.png',
+    image: '/assets/projetos/project5saas.png?v=2',
     href: 'https://github.com/oluuiss/saas-restaurant',
   },
 ].sort((a, b) => b.published.localeCompare(a.published));
